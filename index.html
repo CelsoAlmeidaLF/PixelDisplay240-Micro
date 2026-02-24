@@ -4,40 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelDisplay240 Studio - Designer</title>
+    <title>PixelStream IDE v5 - ESP32 Display Studio</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@400;700;800&family=JetBrains+Mono&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono&display=swap"
         rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
 <body>
+
     <div class="app-container">
+
+        <!-- GLOBAL HEADER -->
         <header>
             <div class="logo">
-                <i data-lucide="layout" style="color: var(--primary); width: 28px; height: 28px;"></i>
-                <h1>PixelDisplay240 <span style="color: var(--primary);">Designer</span></h1>
+                <i data-lucide="palette" class="icon" style="color: var(--primary);"></i>
+                <div style="display: flex; flex-direction: column; line-height: 1;">
+                    <h1 style="margin: 0;">PixelStream <span style="color: var(--primary); font-weight: 800;">v5</span>
+                    </h1>
+                    <span
+                        style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Pro
+                        Edition • Studio</span>
+                </div>
             </div>
 
+            <nav class="mode-nav">
+                <button id="nav-design" class="nav-btn active"><i data-lucide="wrench"></i> Design</button>
+                <button id="nav-prototype" class="nav-btn"><i data-lucide="smartphone"></i> Protótipo</button>
+                <button id="nav-code" class="nav-btn"><i data-lucide="code"></i> Código IDE</button>
+                <button id="nav-hardware" class="nav-btn"><i data-lucide="plug"></i> Config HW</button>
+            </nav>
+
             <div class="header-actions">
-                <button id="btn-undo" class="nav-btn" title="Desfazer (Ctrl+Z)"><i data-lucide="undo"></i></button>
-                <button id="btn-redo" class="nav-btn" title="Refazer (Ctrl+Y)"><i data-lucide="redo"></i></button>
+                <button id="btn-undo" class="secondary-btn icon-btn" title="Desfazer (Ctrl+Z)"><i
+                        data-lucide="undo"></i></button>
+                <button id="btn-redo" class="secondary-btn icon-btn" title="Refazer (Ctrl+Y)"><i
+                        data-lucide="redo"></i></button>
                 <div class="divider"></div>
-                <button id="btn-save-project" class="secondary-btn small-btn"><i data-lucide="save"></i> Salvar
-                    Projeto</button>
-                <button id="btn-load-project" class="secondary-btn small-btn"><i data-lucide="folder-open"></i>
-                    Abrir</button>
-                <input type="file" id="project-input" style="display: none;" accept=".json">
-                <button id="btn-export" class="primary-btn small-btn"><i data-lucide="download"></i> Exportar</button>
+                <button id="btn-upload" class="secondary-btn" onclick="document.getElementById('file-input').click()"><i
+                        data-lucide="upload"></i> Importar</button>
+                <input type="file" id="file-input" accept="image/*" style="display: none;">
+                <div class="divider"></div>
+                <button id="btn-save-project" class="secondary-btn icon-btn" title="Salvar Projeto"><i
+                        data-lucide="save"></i></button>
+                <button id="btn-load-project" class="secondary-btn icon-btn" title="Abrir Projeto"><i
+                        data-lucide="folder-open"></i></button>
+                <input type="file" id="project-input" accept=".json" style="display: none;">
+                <div class="divider"></div>
+                <select id="theme-switcher-header" class="secondary-btn" style="width: auto; padding: 0 10px;">
+                    <option value="default">Personalizada</option>
+                    <option value="dracula">Dracula</option>
+                    <option value="nord">Nord</option>
+                    <option value="monokai">Monokai</option>
+                </select>
+                <div class="divider"></div>
+                <button id="btn-help" class="secondary-btn icon-btn"><i data-lucide="help-circle"></i></button>
+                <button id="btn-export" class="primary-btn"><i data-lucide="download"></i> Exportar</button>
             </div>
         </header>
 
         <main id="main-views">
+            <!-- VIEW: DESIGN -->
             <div id="design-view" class="view-panel active">
                 <aside class="toolbar">
                     <div class="tool-group">
@@ -77,6 +107,33 @@
                                     data-lucide="divide"></i> Simetria X</button>
                             <button id="btn-sym-y" class="secondary-btn small-btn" style="width: 100%;"><i
                                     data-lucide="divide" style="transform: rotate(90deg);"></i> Simetria Y</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Controles de Imagem</label>
+                        <div id="transform-controls" class="grid" style="display: none;">
+                            <button id="btn-apply-img" class="primary-btn small-btn">Aplicar</button>
+                            <button id="btn-cancel-img" class="secondary-btn small-btn">Cancelar</button>
+                            <div class="input-field" style="grid-column: span 2;">
+                                <span>Zoom Imagem</span>
+                                <input type="range" id="img-zoom" min="0.1" max="5" step="0.1" value="1">
+                                <span id="img-zoom-val" style="font-size: 0.7rem;">1.0x</span>
+                            </div>
+                        </div>
+                        <div class="grid">
+                            <button id="btn-clear-guides" class="secondary-btn small-btn"><i data-lucide="delete"></i>
+                                Limpar Guias</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Filtros</label>
+                        <div class="grid">
+                            <button id="filter-gray" class="secondary-btn small-btn">PB</button>
+                            <button id="filter-invert" class="secondary-btn small-btn">Inv</button>
+                            <button id="filter-bright" class="secondary-btn small-btn">Br+</button>
+                            <button id="filter-contrast" class="secondary-btn small-btn">Co+</button>
                         </div>
                     </div>
 
@@ -130,6 +187,7 @@
                                     <canvas id="temp-canvas" width="240" height="240"></canvas>
                                     <canvas id="grid-canvas" width="240" height="240"></canvas>
                                     <div id="guides-container"></div>
+                                    <div id="image-transform-layer"></div>
                                 </div>
                             </div>
                         </div>
@@ -137,88 +195,67 @@
                 </section>
 
                 <aside class="sidebar">
-                    <div class="sidebar-tabs">
-                        <button class="tab-btn active" data-tab="layers"><i data-lucide="layers"></i></button>
-                        <button class="tab-btn" data-tab="collection"><i data-lucide="layout-grid"></i></button>
-                        <button class="tab-btn" data-tab="anim"><i data-lucide="play-circle"></i></button>
-                    </div>
-
-                    <!-- tab: layers -->
-                    <div id="tab-layers" class="tab-content active">
-                        <div class="tool-group">
-                            <label>Visualização</label>
-                            <div id="preview-wrapper" class="preview-box preview-dark">
-                                <canvas id="preview-canvas" width="240" height="240"
-                                    style="width:100%; height:auto;"></canvas>
-                                <div id="anim-overlay"
-                                    style="display:none; position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.5); padding:4px; border-radius:4px; font-size:10px; color:white;">
-                                    PLAYING</div>
-                            </div>
-                            <div class="grid" style="margin-top:8px;">
-                                <label class="check-container">
-                                    <input type="checkbox" id="toggle-grid" checked>
-                                    <span class="checkmark"></span> Grid
-                                </label>
-                                <label class="check-container">
-                                    <input type="checkbox" id="toggle-ruler" checked>
-                                    <span class="checkmark"></span> Réguas
-                                </label>
-                                <label class="check-container">
-                                    <input type="checkbox" id="toggle-guides" checked>
-                                    <span class="checkmark"></span> Guias
-                                </label>
-                            </div>
-                            <div class="input-field compact" style="margin-top:8px;">
-                                <span>Zoom: <span id="work-zoom-val">100</span>%</span>
-                                <input type="range" id="work-zoom" min="50" max="800" value="100" step="10">
-                            </div>
+                    <div class="tool-group">
+                        <label>Visualização</label>
+                        <div id="preview-wrapper" class="preview-box preview-dark">
+                            <canvas id="preview-canvas" width="240" height="240"
+                                style="width:100%; height:auto;"></canvas>
                         </div>
-
-                        <div class="tool-group">
-                            <label>Camadas</label>
-                            <div id="layers-list" class="layers-list" style="max-height: 200px; overflow-y: auto;">
-                            </div>
-                            <div style="display: flex; gap:5px; margin-top: 5px; flex-wrap: wrap;">
-                                <button id="btn-add-layer" class="secondary-btn small-btn"
-                                    style="flex:1; min-width: 80px;"><i data-lucide="plus"></i> Camada</button>
-                                <button id="btn-merge-layers" class="secondary-btn small-btn" title="Achatar"><i
-                                        data-lucide="layers"></i></button>
-                            </div>
+                        <div class="grid" style="margin-top:8px;">
+                            <label class="check-container">
+                                <input type="checkbox" id="toggle-grid" checked>
+                                <span class="checkmark"></span> Grid
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="toggle-ruler" checked>
+                                <span class="checkmark"></span> Réguas
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="toggle-guides" checked>
+                                <span class="checkmark"></span> Guias
+                            </label>
+                        </div>
+                        <div class="grid" style="margin-top:8px;">
+                            <select id="preview-style">
+                                <option value="dark">Escuro</option>
+                                <option value="light">Claro</option>
+                                <option value="check">Grid</option>
+                            </select>
+                        </div>
+                        <div class="input-field compact" style="margin-top:8px;">
+                            <span>Zoom: <span id="work-zoom-val">100</span>%</span>
+                            <input type="range" id="work-zoom" min="50" max="800" value="100" step="10">
                         </div>
                     </div>
 
-                    <!-- tab: collection -->
-                    <div id="tab-collection" class="tab-content">
-                        <div class="tool-group">
-                            <label>Coleção de Sprites</label>
-                            <div id="sprite-list" class="layers-list" style="max-height: 300px; overflow-y: auto;">
-                                <div class="hint">Adicione o canvas atual à coleção.</div>
-                            </div>
-                            <div style="display: flex; gap:5px; margin-top: 8px;">
-                                <button id="btn-add-collection" class="primary-btn small-btn" style="flex:1;"><i
-                                        data-lucide="plus-circle"></i> Capturar</button>
-                                <button id="btn-export-collection" class="secondary-btn small-btn"
-                                    title="Exportar Todos"><i data-lucide="download-cloud"></i></button>
-                            </div>
+                    <div class="tool-group">
+                        <label>Camadas</label>
+                        <div id="layers-list" class="layers-list" style="max-height: 150px; overflow-y: auto;"></div>
+                        <div style="display: flex; gap:5px; margin-top: 5px;">
+                            <button id="btn-add-layer" class="secondary-btn small-btn" style="flex:1;"><i
+                                    data-lucide="plus"></i> Camada</button>
+                            <button id="btn-merge-layers" class="secondary-btn small-btn" title="Achatar"><i
+                                    data-lucide="layers"></i></button>
                         </div>
                     </div>
 
-                    <!-- tab: animation -->
-                    <div id="tab-anim" class="tab-content">
-                        <div class="tool-group">
-                            <label>Visualizador de Animação</label>
-                            <div class="input-field">
-                                <span>FPS: <span id="anim-fps-val">10</span></span>
-                                <input type="range" id="anim-fps" min="1" max="60" value="10">
-                            </div>
-                            <div style="display: flex; gap:5px;">
-                                <button id="btn-play-anim" class="secondary-btn small-btn" style="flex:1;"><i
-                                        data-lucide="play"></i> Reproduzir</button>
-                                <button id="btn-stop-anim" class="secondary-btn small-btn"><i data-lucide="square"></i>
-                                    Parar</button>
-                            </div>
-                            <div class="hint" style="margin-top:10px;">A animação usa todos os sprites da coleção em
-                                sequência.</div>
+                    <div class="tool-group">
+                        <label>Componentes/UI</label>
+                        <div class="grid">
+                            <button id="add-ui-slider" class="secondary-btn small-btn"><i data-lucide="sliders"></i>
+                                Slider</button>
+                            <button id="add-ui-switch" class="secondary-btn small-btn"><i data-lucide="toggle-left"></i>
+                                Switch</button>
+                            <button id="add-ui-bar" class="secondary-btn small-btn"><i data-lucide="loader"></i>
+                                Bar</button>
+                        </div>
+                        <div id="prop-panel" class="hint" style="margin-top:8px;">Propriedades</div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Live Code (C++)</label>
+                        <div class="code-preview-panel">
+                            <div id="live-code-preview">// Aguardando...</div>
                         </div>
                     </div>
 
@@ -237,89 +274,358 @@
                         <div class="input-field">
                             <span>Formato</span>
                             <select id="export-format">
-                                <option value="jpeg">Imagem JPEG (.jpg)</option>
-                                <option value="rgb565">RGB565 (C Array)</option>
-                                <option value="rle565">RGB565 + RLE (C Array)</option>
-                                <option value="rgb888">RGB888 (C Array)</option>
+                                <option value="rgb565">RGB565</option>
+                                <option value="rgb888">RGB888</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Coleção & Animação</label>
+                        <div id="sprite-list" class="sprite-list"></div>
+                        <div style="display: flex; gap:5px; margin-top:8px;">
+                            <button id="btn-add-collection" class="secondary-btn small-btn" style="flex:1;">📦
+                                Col.</button>
+                            <button id="btn-play-anim" class="secondary-btn small-btn">▶️</button>
                         </div>
                     </div>
                 </aside>
             </div>
+
+            <!-- VIEW: PROTOTYPE -->
+            <div id="prototype-view" class="view-panel">
+                <!-- LEFT: Screens + Preview -->
+                <aside class="toolbar" style="width: 200px;">
+                    <div class="tool-group">
+                        <label>Telas</label>
+                        <div id="screen-list" class="layers-list"></div>
+                        <button id="btn-add-screen" class="secondary-btn small-btn"
+                            style="width:100%; margin-top: 8px;"><i data-lucide="plus"></i> Nova Tela</button>
+                    </div>
+                    <div class="tool-group">
+                        <label>Interações</label>
+                        <div id="proto-interaction-panel" class="hint">Selecione um objeto.</div>
+                    </div>
+                </aside>
+
+                <!-- CENTER: Canvas Preview -->
+                <section class="composition-view"
+                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
+                    <canvas id="proto-canvas" width="240" height="240"
+                        style="border: 3px solid var(--border); border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.6);"></canvas>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">Preview 240×240</span>
+                </section>
+
+                <!-- RIGHT: Full Code Editor -->
+                <aside class="sidebar" style="display: flex; flex-direction: column; padding: 0; overflow: hidden;">
+                    <!-- Code Header Bar -->
+                    <div
+                        style="background: var(--card-bg); padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i data-lucide="file-code" style="width:16px; color: var(--primary);"></i>
+                            <span
+                                style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-main);">screen_logic.cpp</span>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="text-btn small-btn" title="Copiar"
+                                onclick="navigator.clipboard.writeText(document.getElementById('proto-code-editor').value)"><i
+                                    data-lucide="copy" style="width:14px;"></i></button>
+                        </div>
+                    </div>
+                    <!-- Editor Area -->
+                    <textarea id="proto-code-editor"
+                        style="flex: 1; background: #020617; border: none; margin: 0; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; padding: 1.5rem; resize: none; width: 100%; outline: none; line-height: 1.7; tab-size: 4;"
+                        spellcheck="false">#include <TFT_eSPI.h>
+TFT_eSPI tft = TFT_eSPI();
+
+void setup() {
+    tft.init();
+    tft.fillScreen(TFT_BLACK);
+
+    // Header bar
+    tft.fillRect(0, 0, 240, 40, TFT_NAVY);
+    tft.setTextColor(TFT_WHITE);
+    tft.setTextSize(2);
+    tft.setCursor(10, 12);
+    tft.print("PixelStream v5");
+
+    // Status circle
+    tft.fillCircle(120, 120, 50, TFT_GREEN);
+    tft.fillCircle(120, 120, 40, TFT_BLACK);
+    tft.setTextColor(TFT_GREEN);
+    tft.setTextSize(3);
+    tft.setCursor(105, 108);
+    tft.print("OK");
+
+    // Grid lines
+    for (int i = 0; i < 240; i += 30) {
+        tft.drawLine(i, 180, i, 240, TFT_DARKGREY);
+    }
+
+    // Bottom bar
+    tft.fillRect(0, 220, 240, 20, TFT_MAROON);
+    tft.setTextSize(1);
+    tft.setTextColor(TFT_WHITE);
+    tft.setCursor(5, 225);
+    tft.print("ESP32 Ready - 240x240");
+}</textarea>
+                    <!-- Bottom Action Bar -->
+                    <div
+                        style="background: var(--card-bg); padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; flex-shrink: 0;">
+                        <button id="btn-sim-proto" class="primary-btn small-btn" style="flex: 1;"
+                            onclick="runSimulation('proto')"><i data-lucide="play"></i> Simular</button>
+                        <button id="btn-stop-proto" class="secondary-btn small-btn" style="background: #7f1d1d;"
+                            title="Parar Simulação" onclick="stopSimulation('proto')" disabled><i data-lucide="square"
+                                style="width:14px;"></i></button>
+                        <button class="secondary-btn small-btn" title="Limpar Canvas"
+                            onclick="clearSimCanvas('proto')"><i data-lucide="trash-2" style="width:14px;"></i></button>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- VIEW: FULL CODE IDE -->
+            <div id="code-view" class="view-panel">
+                <aside class="toolbar" style="width: 200px;">
+                    <div class="tool-group">
+                        <label>Arquivos</label>
+                        <div class="layers-list">
+                            <div class="layer-item active"><i data-lucide="file-code" style="width:14px;"></i> main.cpp
+                            </div>
+                            <div class="layer-item"><i data-lucide="file-code" style="width:14px;"></i> display.h</div>
+                            <div class="layer-item"><i data-lucide="image" style="width:14px;"></i> sprites.h</div>
+                        </div>
+                    </div>
+                </aside>
+
+                <section class="editor-area"
+                    style="padding: 0; background: #020617; display: flex; flex-direction: column;">
+                    <div class="code-header"
+                        style="background: var(--card-bg); padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; gap: 20px;">
+                            <span style="color: var(--primary); font-family: 'JetBrains Mono'; font-size: 0.8rem;">root
+                                > src > main.cpp</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="secondary-btn small-btn"
+                                onclick="navigator.clipboard.writeText(document.getElementById('full-ide-editor').value)"><i
+                                    data-lucide="copy"></i> Copiar</button>
+                            <button id="btn-stop-ide" class="secondary-btn small-btn" style="background:#7f1d1d;"
+                                onclick="stopSimulation('ide')" disabled><i data-lucide="square"
+                                    style="width:14px;"></i> Parar</button>
+                            <button class="secondary-btn small-btn" onclick="clearSimCanvas('ide')"><i
+                                    data-lucide="trash-2" style="width:14px;"></i></button>
+                            <button id="btn-sim-ide" class="primary-btn small-btn" onclick="runSimulation('ide')"><i
+                                    data-lucide="play"></i> Compilar & Simular</button>
+                        </div>
+                    </div>
+                    <textarea id="full-ide-editor"
+                        style="flex: 1; background: transparent; border: none; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 1rem; padding: 2rem; resize: none; outline: none; line-height: 1.6; tab-size: 4;"
+                        spellcheck="false">#include <TFT_eSPI.h>
+TFT_eSPI tft = TFT_eSPI();
+
+void setup() {
+    tft.init();
+    tft.fillScreen(TFT_BLACK);
+
+    // Desenhe retangulos coloridos
+    tft.fillRect(10, 10, 100, 60, TFT_BLUE);
+    tft.fillRect(130, 10, 100, 60, TFT_RED);
+
+    // Circulos
+    tft.fillCircle(60, 140, 40, TFT_YELLOW);
+    tft.drawCircle(180, 140, 40, TFT_CYAN);
+
+    // Texto
+    tft.setTextColor(TFT_WHITE);
+    tft.setTextSize(2);
+    tft.setCursor(20, 200);
+    tft.print("Hello ESP32!");
+
+    // Linhas decorativas
+    for (int i = 0; i < 240; i += 10) {
+        tft.drawLine(0, i, i, 240, TFT_DARKGREEN);
+    }
+}</textarea>
+                </section>
+
+                <aside class="sidebar" style="width: 300px; display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="tool-group">
+                        <label>Preview do Display</label>
+                        <div class="preview-box preview-dark"
+                            style="width: 240px; height: 240px; margin: 0 auto; border: 4px solid #334155; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5);">
+                            <canvas id="ide-preview-canvas" width="240" height="240"></canvas>
+                        </div>
+                    </div>
+                    <div class="tool-group">
+                        <label>Console de Saída</label>
+                        <div
+                            style="background: #000; border-radius: 8px; padding: 10px; font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #94a3b8; height: 200px; overflow-y: auto;">
+                            <p style="color: #4ade80;">[INFO] Sistema Inicializado.</p>
+                            <p>[INFO] Carregando sprites...</p>
+                            <p>[INFO] Memória livre: 128KB</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- VIEW: HARDWARE -->
+            <div id="hardware-view" class="view-panel">
+                <div
+                    style="max-width: 600px; margin: 4rem auto; background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);">
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                        <i data-lucide="cpu" class="icon" style="color: var(--primary); width: 32px; height: 32px;"></i>
+                        <h2 style="margin: 0;">Configuração de Hardware</h2>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Controlador & Display</label>
+                        <div class="grid">
+                            <div class="input-field">
+                                <span>Controlador</span>
+                                <select id="hw-controller">
+                                    <option value="ST7789">ST7789 (IPS)</option>
+                                    <option value="ILI9341">ILI9341 (TFT)</option>
+                                    <option value="SSD1306">SSD1306 (OLED)</option>
+                                    <option value="GC9A01">GC9A01 (Circular)</option>
+                                </select>
+                            </div>
+                            <div class="input-field">
+                                <span>Resolução</span>
+                                <select id="hw-resolution">
+                                    <option value="240x240">240x240 px</option>
+                                    <option value="240x320">240x320 px</option>
+                                    <option value="128x64">128x64 px</option>
+                                    <option value="320x480">320x480 px</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Pinagem SPI (Interface)</label>
+                        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+                            <div class="input-field"><span>MOSI (SDA)</span><input type="number" id="pin-mosi"
+                                    value="23"></div>
+                            <div class="input-field"><span>SCK (SCL)</span><input type="number" id="pin-sck" value="18">
+                            </div>
+                            <div class="input-field"><span>MISO</span><input type="number" id="pin-miso" value="19">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Sinais de Controle</label>
+                        <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
+                            <div class="input-field"><span>CS (Chip Select)</span><input type="number" id="pin-cs"
+                                    value="5"></div>
+                            <div class="input-field"><span>DC (Data/Cmd)</span><input type="number" id="pin-dc"
+                                    value="2"></div>
+                            <div class="input-field"><span>RST (Reset)</span><input type="number" id="pin-rst"
+                                    value="4"></div>
+                            <div class="input-field"><span>BL (Backlight)</span><input type="number" id="pin-bl"
+                                    value="15"></div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Velocidade SPI</label>
+                        <select id="hw-spi-speed">
+                            <option value="80000000">80.0 MHz (Ultra Fast)</option>
+                            <option value="40000000">40.0 MHz (Fast)</option>
+                            <option value="20000000">20.0 MHz (Standard)</option>
+                            <option value="10000000">10.0 MHz (Slow/Safe)</option>
+                        </select>
+                    </div>
+
+                    <button class="primary-btn" style="width:100%; margin-top:1rem; height: 50px; font-size: 1rem;"><i
+                            data-lucide="save"></i> Salvar Configuração de Hardware</button>
+                    <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 1rem; text-align: center;">Esses
+                        pinos serão incluídos automaticamente como definições no código exportado.</p>
+                </div>
+            </div>
         </main>
+
+        <!-- STATUS BAR (Footer) -->
+        <footer id="status-bar">
+            <div class="status-left">
+                <span id="status-view"><i data-lucide="layout" style="width:12px;height:12px;"></i> Design</span>
+                <span class="status-sep">|</span>
+                <span id="status-canvas">240 × 240</span>
+                <span class="status-sep">|</span>
+                <span id="status-zoom">Zoom: 100%</span>
+            </div>
+            <div class="status-center">
+                <span id="status-project">PixelStream v5</span>
+            </div>
+            <div class="status-right">
+                <span id="status-memory"><i data-lucide="cpu" style="width:12px;height:12px;"></i> RAM: --</span>
+                <span class="status-sep">|</span>
+                <span id="status-time"></span>
+            </div>
+        </footer>
     </div>
 
-    <!-- AI Generator Modal -->
-    <div id="ai-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content ai-creator">
-            <div class="modal-header">
-                <h3><i data-lucide="sparkles" style="color:var(--primary);"></i> AI Pixel Creator</h3>
-                <button id="ai-modal-close" class="nav-btn"><i data-lucide="x"></i></button>
-            </div>
+    <!-- TOAST NOTIFICATIONS -->
+    <!-- Error/Warning: bottom center -->
+    <div id="toast-error-container"></div>
+    <!-- Success: bottom right -->
+    <div id="toast-success-container"></div>
 
-            <div class="input-field">
-                <label>O que você quer criar?</label>
-                <textarea id="ai-prompt" placeholder="Ex: Uma espada de fogo estilo 16-bit, fundo preto..."
-                    rows="3"></textarea>
-            </div>
-
-            <div class="grid" style="margin-bottom: 1rem;">
-                <div class="input-field">
-                    <span>Paleta</span>
-                    <select id="ai-palette">
-                        <option value="full">Cores Reais</option>
-                        <option value="16">16 Cores</option>
-                        <option value="8">8 Cores</option>
-                        <option value="4">4 Cores (Retro)</option>
-                    </select>
-                </div>
-                <div class="input-field">
-                    <span>Pixel Size</span>
-                    <select id="ai-pixel-size">
-                        <option value="1">1x1 (Original)</option>
-                        <option value="2">2x2 (Pixelado)</option>
-                        <option value="4">4x4 (Extremo)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="ai-preview" class="ai-preview-box" style="display: none;">
-                <canvas id="ai-preview-canvas" width="240" height="240"></canvas>
-            </div>
-
-            <div id="ai-loading" class="loading-spinner" style="display: none;">
-                <div class="spinner"></div>
-                <p>Invocando redes neurais...</p>
-            </div>
-
-            <div class="modal-actions">
-                <button id="btn-ai-generate" class="primary-btn"><i data-lucide="zap"></i> Gerar Imagem</button>
-                <button id="btn-ai-apply" class="secondary-btn" style="display: none;"><i data-lucide="check"></i>
-                    Aplicar ao Canvas</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- UI Overlay for Modals/Dialogs -->
-    <div id="ui-overlay" class="modal-overlay" style="display: none;">
+    <!-- MODALS -->
+    <div id="export-modal" class="modal">
         <div class="modal-content">
-            <h3 id="modal-title">Título</h3>
-            <p id="modal-message">Mensagem aqui...</p>
-            <input type="text" id="modal-input" style="display: none; width: 100%; margin-top: 10px;"
-                class="input-field">
-            <div class="modal-actions">
-                <button id="modal-cancel" class="secondary-btn">Cancelar</button>
-                <button id="modal-ok" class="primary-btn">OK</button>
+            <h2>Exportar</h2>
+            <textarea id="output-text" readonly></textarea>
+            <div class="header-actions" style="justify-content: flex-end; gap: 8px;">
+                <button id="btn-download-bmp" class="secondary-btn small-btn">BMP</button>
+                <button id="btn-download-jpg" class="secondary-btn small-btn">JPG</button>
+                <button id="btn-download-bin" class="secondary-btn small-btn">BIN</button>
+                <button id="btn-download" class="primary-btn">Download .h</button>
+                <button id="btn-close-modal" class="text-btn">Fechar</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notifications -->
-    <div id="toast-container"></div>
+    <div id="help-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h2>Guia PixelStream</h2>
+            <p>Atalhos: Ctrl+Z (Undo), Ctrl+Y (Redo), Alt (Picker).</p>
+            <button id="btn-close-help" class="primary-btn">Fechar</button>
+        </div>
+    </div>
 
-    <script src="app.js"></script>
+    <div id="font-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h2>Gerador de Fontes</h2>
+            <input type="text" id="font-family" value="Arial">
+            <input type="number" id="font-size" value="16">
+            <textarea id="font-output" readonly></textarea>
+            <button id="btn-gen-font" class="primary-btn">Gerar</button>
+            <button id="btn-close-font" class="text-btn">Fechar</button>
+        </div>
+    </div>
+
+    <!-- CUSTOM DIALOG (replaces alert/confirm/prompt) -->
+    <div id="custom-dialog" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width: 420px; text-align: center;">
+            <div id="dialog-icon" style="margin-bottom: 1rem;"></div>
+            <h3 id="dialog-title" style="margin-bottom: 0.5rem;"></h3>
+            <p id="dialog-message" style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.9rem;"></p>
+            <input type="text" id="dialog-input" style="display:none; margin-bottom: 1rem; text-align: center;">
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="dialog-cancel" class="secondary-btn"
+                    style="display:none; min-width: 100px;">Cancelar</button>
+                <button id="dialog-confirm" class="primary-btn" style="min-width: 100px;">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
     <script>
-        lucide.createIcons();
+        // Emergency icon reload
+        window.addEventListener('load', () => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        });
     </script>
 </body>
 

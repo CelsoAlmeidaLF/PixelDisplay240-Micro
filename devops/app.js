@@ -7,6 +7,26 @@ class EditorModule {
     constructor() { this.dom = (id) => document.getElementById(id); }
 }
 
+class ThemeManager extends EditorModule {
+    constructor() {
+        super();
+        this.themes = {
+            default: { bg: '#020617', card: '#1e293b', primary: '#38bdf8', border: '#334155' },
+            dracula: { bg: '#282a36', card: '#44475a', primary: '#bd93f9', border: '#6272a4' },
+            nord: { bg: '#2e3440', card: '#3b4252', primary: '#88c0d0', border: '#4c566a' },
+            monokai: { bg: '#272822', card: '#3e3d32', primary: '#f92672', border: '#75715e' }
+        };
+    }
+    setTheme(id) {
+        const t = this.themes[id]; if (!t) return;
+        const root = document.documentElement.style;
+        root.setProperty('--bg-dark', t.bg);
+        root.setProperty('--card-bg', t.card);
+        root.setProperty('--primary', t.primary);
+        root.setProperty('--border', t.border);
+    }
+}
+
 class Layer {
     constructor(appRef, name, width, height, dataURL = null, backgroundColor = null) {
         this.app = appRef; this.name = name; this.visible = true;
@@ -71,7 +91,14 @@ class LayerManager extends EditorModule {
             const i = this.layers.length - 1 - revIdx;
             const item = document.createElement('div');
             item.className = `layer-item ${i === this.activeIndex ? 'active' : ''}`;
-            item.innerHTML = `<span onclick="event.stopPropagation(); app.layers.toggleVisibility(${i})"><i data-lucide="${l.visible ? 'eye' : 'eye-off'}" style="width:14px;"></i></span><span style="flex:1; margin-left:8px;" ondblclick="app.layers.rename(${i})">${l.name}</span><button class="text-btn" onclick="event.stopPropagation(); app.layers.delete(${i})"><i data-lucide="trash-2" style="width:14px;"></i></button>`;
+            item.innerHTML = `
+                <span onclick="event.stopPropagation(); app.layers.toggleVisibility(${i})" style="cursor:pointer; display:flex; align-items:center;">
+                    <i data-lucide="${l.visible ? 'eye' : 'eye-off'}" style="width:14px; color:${l.visible ? 'var(--primary)' : 'var(--text-muted)'};"></i>
+                </span>
+                <span style="flex:1; margin-left:10px; font-size:0.85rem;" ondblclick="app.layers.rename(${i})">${l.name}</span>
+                <button class="text-btn" onclick="event.stopPropagation(); app.layers.delete(${i})" title="Excluir">
+                    <i data-lucide="trash-2" style="width:14px; color:var(--text-muted);"></i>
+                </button>`;
             item.onclick = () => this.select(i); this.listEl.appendChild(item);
         });
         if (window.lucide) lucide.createIcons();
@@ -353,6 +380,10 @@ class AIPixelArtGenerator extends EditorModule {
                 t.getContext('2d').drawImage(img, 0, 0, t.width, t.height);
                 ctx.imageSmoothingEnabled = false; ctx.drawImage(t, 0, 0, 240, 240);
             } else ctx.drawImage(img, 0, 0);
+
+            const pal = this.dom('ai-palette').value;
+            if (pal !== 'full') this._reduce(ctx, parseInt(pal));
+
             this.dom('ai-loading').style.display = 'none'; this.dom('ai-preview').style.display = 'block';
             this.dom('btn-ai-apply').style.display = 'inline-flex';
         };
@@ -363,12 +394,28 @@ class AIPixelArtGenerator extends EditorModule {
         if (active) { active.ctx.drawImage(this.dom('ai-preview-canvas'), 0, 0); this.app.refresh(); this.app.saveHistory(); }
         this.dom('ai-modal').style.display = 'none';
     }
+    _reduce(ctx, n) {
+        const id = ctx.getImageData(0, 0, 240, 240);
+        const d = id.data;
+        const p = {
+            16: [[0, 0, 0], [128, 0, 0], [0, 128, 0], [128, 128, 0], [0, 0, 128], [128, 0, 128], [0, 128, 128], [192, 192, 192], [128, 128, 128], [255, 0, 0], [0, 255, 0], [255, 255, 0], [0, 0, 255], [255, 0, 255], [0, 255, 255], [255, 255, 255]],
+            8: [[0, 0, 0], [255, 0, 0], [0, 255, 0], [0, 0, 255], [255, 255, 0], [255, 0, 255], [0, 255, 255], [255, 255, 255]]
+        }[n] || [];
+        if (!p.length) return;
+        for (let i = 0; i < d.length; i += 4) {
+            let m = Infinity, b = p[0];
+            for (const c of p) { const dist = (d[i] - c[0]) ** 2 + (d[i + 1] - c[1]) ** 2 + (d[i + 2] - c[2]) ** 2; if (dist < m) { m = dist; b = c; } }
+            d[i] = b[0]; d[i + 1] = b[1]; d[i + 2] = b[2];
+        }
+        ctx.putImageData(id, 0, 0);
+    }
 }
 
 class PixelDisplay240App extends EditorModule {
     constructor() {
         super(); this.currentTool = 'brush'; this.undoStack = []; this.redoStack = [];
         this.dialog = new DialogManager(); this.toast = new ToastManager();
+        this.theme = new ThemeManager();
         this.layers = new LayerManager(this); this.layout = new LayoutManager(this);
         this.drawing = new DrawingManager(this); this.collection = new CollectionManager(this);
         this.ai = new AIPixelArtGenerator(this);
@@ -399,6 +446,27 @@ class PixelDisplay240App extends EditorModule {
         this.dom('project-input').onchange = (e) => this.loadProject(e);
         this.dom('btn-export').onclick = () => this.export();
         this.dom('palette-presets').onchange = (e) => this.setPalette(e.target.value);
+        this.dom('theme-selector').onchange = (e) => this.theme.setTheme(e.target.value);
+
+        // Keyboard Shortcuts
+        window.onkeydown = (e) => {
+            if (e.ctrlKey && e.key === 'z') { e.preventDefault(); this.undo(); }
+            if (e.ctrlKey && e.key === 'y') { e.preventDefault(); this.redo(); }
+            if (e.key === 'b') this.dom('tool-brush').click();
+            if (e.key === 'e') this.dom('tool-eraser').click();
+            if (e.key === 'f') this.dom('tool-fill').click();
+        };
+
+        // Filters
+        this.dom('filter-gray').onclick = () => this.applyFilter('gray');
+        this.dom('filter-invert').onclick = () => this.applyFilter('invert');
+        this.dom('filter-bright').onclick = () => this.applyFilter('bright');
+        this.dom('filter-contrast').onclick = () => this.applyFilter('contrast');
+
+        // UI Components
+        this.dom('add-ui-slider').onclick = () => this.addUIComponent('slider');
+        this.dom('add-ui-switch').onclick = () => this.addUIComponent('switch');
+        this.dom('add-ui-bar').onclick = () => this.addUIComponent('bar');
     }
     refresh() {
         const w = parseInt(this.dom('canvas-width').value), h = parseInt(this.dom('canvas-height').value);
@@ -469,6 +537,26 @@ class PixelDisplay240App extends EditorModule {
             const div = document.createElement('div'); div.className = 'palette-color'; div.style.backgroundColor = c;
             div.onclick = () => this.dom('color-picker').value = c; g.insertBefore(div, this.dom('btn-save-color'));
         });
+    }
+    applyFilter(type) {
+        const active = this.layers.active; if (!active) return;
+        const ctx = active.ctx, id = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height), d = id.data;
+        for (let i = 0; i < d.length; i += 4) {
+            if (type === 'gray') { const g = d[i] * 0.3 + d[i + 1] * 0.59 + d[i + 2] * 0.11; d[i] = d[i + 1] = d[i + 2] = g; }
+            else if (type === 'invert') { d[i] = 255 - d[i]; d[i + 1] = 255 - d[i + 1]; d[i + 2] = 255 - d[i + 2]; }
+            else if (type === 'bright') { d[i] += 20; d[i + 1] += 20; d[i + 2] += 20; }
+            else if (type === 'contrast') { const f = (259 * (50 + 255)) / (255 * (259 - 50)); d[i] = f * (d[i] - 128) + 128; d[i + 1] = f * (d[i + 1] - 128) + 128; d[i + 2] = f * (d[i + 2] - 128) + 128; }
+        }
+        ctx.putImageData(id, 0, 0); this.refresh(); this.saveHistory();
+    }
+    addUIComponent(type) {
+        const active = this.layers.active; if (!active) return;
+        const ctx = active.ctx, c = this.dom('color-picker').value, w = active.canvas.width, h = active.canvas.height, cx = w / 2, cy = h / 2;
+        ctx.fillStyle = c; ctx.strokeStyle = c; ctx.lineWidth = 2;
+        if (type === 'slider') { ctx.strokeRect(cx - 40, cy - 5, 80, 10); ctx.fillRect(cx - 10, cy - 10, 20, 20); }
+        else if (type === 'switch') { ctx.beginPath(); ctx.arc(cx - 15, cy, 10, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.arc(cx + 15, cy, 10, 0, Math.PI * 2); ctx.fill(); }
+        else if (type === 'bar') { ctx.strokeRect(cx - 50, cy - 8, 100, 16); ctx.fillRect(cx - 48, cy - 6, 60, 12); }
+        this.refresh(); this.saveHistory();
     }
 }
 
