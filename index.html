@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PixelStream IDE v5 - ESP32 Display Studio</title>
+    <title>PixelDisplay240 IDE v5 - ESP32 Display Studio</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +23,8 @@
             <div class="logo">
                 <i data-lucide="palette" class="icon" style="color: var(--primary);"></i>
                 <div style="display: flex; flex-direction: column; line-height: 1;">
-                    <h1 style="margin: 0;">PixelStream <span style="color: var(--primary); font-weight: 800;">v5</span>
+                    <h1 style="margin: 0;">PixelDisplay240 <span
+                            style="color: var(--primary); font-weight: 800;">v5</span>
                     </h1>
                     <span
                         style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); font-weight: 700;">Pro
@@ -31,12 +32,7 @@
                 </div>
             </div>
 
-            <nav class="mode-nav">
-                <button id="nav-design" class="nav-btn active"><i data-lucide="wrench"></i> Design</button>
-                <button id="nav-prototype" class="nav-btn"><i data-lucide="smartphone"></i> Protótipo</button>
-                <button id="nav-code" class="nav-btn"><i data-lucide="code"></i> Código IDE</button>
-                <button id="nav-hardware" class="nav-btn"><i data-lucide="plug"></i> Config HW</button>
-            </nav>
+
 
             <div class="header-actions">
                 <button id="btn-undo" class="secondary-btn icon-btn" title="Desfazer (Ctrl+Z)"><i
@@ -53,14 +49,7 @@
                 <button id="btn-load-project" class="secondary-btn icon-btn" title="Abrir Projeto"><i
                         data-lucide="folder-open"></i></button>
                 <input type="file" id="project-input" accept=".json" style="display: none;">
-                <div class="divider"></div>
-                <select id="theme-switcher-header" class="secondary-btn" style="width: auto; padding: 0 10px;">
-                    <option value="default">Personalizada</option>
-                    <option value="dracula">Dracula</option>
-                    <option value="nord">Nord</option>
-                    <option value="monokai">Monokai</option>
-                </select>
-                <div class="divider"></div>
+
                 <button id="btn-help" class="secondary-btn icon-btn"><i data-lucide="help-circle"></i></button>
                 <button id="btn-export" class="primary-btn"><i data-lucide="download"></i> Exportar</button>
             </div>
@@ -239,18 +228,7 @@
                         </div>
                     </div>
 
-                    <div class="tool-group">
-                        <label>Componentes/UI</label>
-                        <div class="grid">
-                            <button id="add-ui-slider" class="secondary-btn small-btn"><i data-lucide="sliders"></i>
-                                Slider</button>
-                            <button id="add-ui-switch" class="secondary-btn small-btn"><i data-lucide="toggle-left"></i>
-                                Switch</button>
-                            <button id="add-ui-bar" class="secondary-btn small-btn"><i data-lucide="loader"></i>
-                                Bar</button>
-                        </div>
-                        <div id="prop-panel" class="hint" style="margin-top:8px;">Propriedades</div>
-                    </div>
+
 
                     <div class="tool-group">
                         <label>Live Code (C++)</label>
@@ -292,257 +270,7 @@
                 </aside>
             </div>
 
-            <!-- VIEW: PROTOTYPE -->
-            <div id="prototype-view" class="view-panel">
-                <!-- LEFT: Screens + Preview -->
-                <aside class="toolbar" style="width: 200px;">
-                    <div class="tool-group">
-                        <label>Telas</label>
-                        <div id="screen-list" class="layers-list"></div>
-                        <button id="btn-add-screen" class="secondary-btn small-btn"
-                            style="width:100%; margin-top: 8px;"><i data-lucide="plus"></i> Nova Tela</button>
-                    </div>
-                    <div class="tool-group">
-                        <label>Interações</label>
-                        <div id="proto-interaction-panel" class="hint">Selecione um objeto.</div>
-                    </div>
-                </aside>
 
-                <!-- CENTER: Canvas Preview -->
-                <section class="composition-view"
-                    style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem;">
-                    <canvas id="proto-canvas" width="240" height="240"
-                        style="border: 3px solid var(--border); border-radius: 12px; box-shadow: 0 0 40px rgba(0,0,0,0.6);"></canvas>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">Preview 240×240</span>
-                </section>
-
-                <!-- RIGHT: Full Code Editor -->
-                <aside class="sidebar" style="display: flex; flex-direction: column; padding: 0; overflow: hidden;">
-                    <!-- Code Header Bar -->
-                    <div
-                        style="background: var(--card-bg); padding: 10px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <i data-lucide="file-code" style="width:16px; color: var(--primary);"></i>
-                            <span
-                                style="font-family: 'JetBrains Mono'; font-size: 0.75rem; color: var(--text-main);">screen_logic.cpp</span>
-                        </div>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="text-btn small-btn" title="Copiar"
-                                onclick="navigator.clipboard.writeText(document.getElementById('proto-code-editor').value)"><i
-                                    data-lucide="copy" style="width:14px;"></i></button>
-                        </div>
-                    </div>
-                    <!-- Editor Area -->
-                    <textarea id="proto-code-editor"
-                        style="flex: 1; background: #020617; border: none; margin: 0; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; padding: 1.5rem; resize: none; width: 100%; outline: none; line-height: 1.7; tab-size: 4;"
-                        spellcheck="false">#include <TFT_eSPI.h>
-TFT_eSPI tft = TFT_eSPI();
-
-void setup() {
-    tft.init();
-    tft.fillScreen(TFT_BLACK);
-
-    // Header bar
-    tft.fillRect(0, 0, 240, 40, TFT_NAVY);
-    tft.setTextColor(TFT_WHITE);
-    tft.setTextSize(2);
-    tft.setCursor(10, 12);
-    tft.print("PixelStream v5");
-
-    // Status circle
-    tft.fillCircle(120, 120, 50, TFT_GREEN);
-    tft.fillCircle(120, 120, 40, TFT_BLACK);
-    tft.setTextColor(TFT_GREEN);
-    tft.setTextSize(3);
-    tft.setCursor(105, 108);
-    tft.print("OK");
-
-    // Grid lines
-    for (int i = 0; i < 240; i += 30) {
-        tft.drawLine(i, 180, i, 240, TFT_DARKGREY);
-    }
-
-    // Bottom bar
-    tft.fillRect(0, 220, 240, 20, TFT_MAROON);
-    tft.setTextSize(1);
-    tft.setTextColor(TFT_WHITE);
-    tft.setCursor(5, 225);
-    tft.print("ESP32 Ready - 240x240");
-}</textarea>
-                    <!-- Bottom Action Bar -->
-                    <div
-                        style="background: var(--card-bg); padding: 10px 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; flex-shrink: 0;">
-                        <button id="btn-sim-proto" class="primary-btn small-btn" style="flex: 1;"
-                            onclick="runSimulation('proto')"><i data-lucide="play"></i> Simular</button>
-                        <button id="btn-stop-proto" class="secondary-btn small-btn" style="background: #7f1d1d;"
-                            title="Parar Simulação" onclick="stopSimulation('proto')" disabled><i data-lucide="square"
-                                style="width:14px;"></i></button>
-                        <button class="secondary-btn small-btn" title="Limpar Canvas"
-                            onclick="clearSimCanvas('proto')"><i data-lucide="trash-2" style="width:14px;"></i></button>
-                    </div>
-                </aside>
-            </div>
-
-            <!-- VIEW: FULL CODE IDE -->
-            <div id="code-view" class="view-panel">
-                <aside class="toolbar" style="width: 200px;">
-                    <div class="tool-group">
-                        <label>Arquivos</label>
-                        <div class="layers-list">
-                            <div class="layer-item active"><i data-lucide="file-code" style="width:14px;"></i> main.cpp
-                            </div>
-                            <div class="layer-item"><i data-lucide="file-code" style="width:14px;"></i> display.h</div>
-                            <div class="layer-item"><i data-lucide="image" style="width:14px;"></i> sprites.h</div>
-                        </div>
-                    </div>
-                </aside>
-
-                <section class="editor-area"
-                    style="padding: 0; background: #020617; display: flex; flex-direction: column;">
-                    <div class="code-header"
-                        style="background: var(--card-bg); padding: 10px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; gap: 20px;">
-                            <span style="color: var(--primary); font-family: 'JetBrains Mono'; font-size: 0.8rem;">root
-                                > src > main.cpp</span>
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <button class="secondary-btn small-btn"
-                                onclick="navigator.clipboard.writeText(document.getElementById('full-ide-editor').value)"><i
-                                    data-lucide="copy"></i> Copiar</button>
-                            <button id="btn-stop-ide" class="secondary-btn small-btn" style="background:#7f1d1d;"
-                                onclick="stopSimulation('ide')" disabled><i data-lucide="square"
-                                    style="width:14px;"></i> Parar</button>
-                            <button class="secondary-btn small-btn" onclick="clearSimCanvas('ide')"><i
-                                    data-lucide="trash-2" style="width:14px;"></i></button>
-                            <button id="btn-sim-ide" class="primary-btn small-btn" onclick="runSimulation('ide')"><i
-                                    data-lucide="play"></i> Compilar & Simular</button>
-                        </div>
-                    </div>
-                    <textarea id="full-ide-editor"
-                        style="flex: 1; background: transparent; border: none; color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 1rem; padding: 2rem; resize: none; outline: none; line-height: 1.6; tab-size: 4;"
-                        spellcheck="false">#include <TFT_eSPI.h>
-TFT_eSPI tft = TFT_eSPI();
-
-void setup() {
-    tft.init();
-    tft.fillScreen(TFT_BLACK);
-
-    // Desenhe retangulos coloridos
-    tft.fillRect(10, 10, 100, 60, TFT_BLUE);
-    tft.fillRect(130, 10, 100, 60, TFT_RED);
-
-    // Circulos
-    tft.fillCircle(60, 140, 40, TFT_YELLOW);
-    tft.drawCircle(180, 140, 40, TFT_CYAN);
-
-    // Texto
-    tft.setTextColor(TFT_WHITE);
-    tft.setTextSize(2);
-    tft.setCursor(20, 200);
-    tft.print("Hello ESP32!");
-
-    // Linhas decorativas
-    for (int i = 0; i < 240; i += 10) {
-        tft.drawLine(0, i, i, 240, TFT_DARKGREEN);
-    }
-}</textarea>
-                </section>
-
-                <aside class="sidebar" style="width: 300px; display: flex; flex-direction: column; gap: 1rem;">
-                    <div class="tool-group">
-                        <label>Preview do Display</label>
-                        <div class="preview-box preview-dark"
-                            style="width: 240px; height: 240px; margin: 0 auto; border: 4px solid #334155; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5);">
-                            <canvas id="ide-preview-canvas" width="240" height="240"></canvas>
-                        </div>
-                    </div>
-                    <div class="tool-group">
-                        <label>Console de Saída</label>
-                        <div
-                            style="background: #000; border-radius: 8px; padding: 10px; font-family: 'JetBrains Mono'; font-size: 0.7rem; color: #94a3b8; height: 200px; overflow-y: auto;">
-                            <p style="color: #4ade80;">[INFO] Sistema Inicializado.</p>
-                            <p>[INFO] Carregando sprites...</p>
-                            <p>[INFO] Memória livre: 128KB</p>
-                        </div>
-                    </div>
-                </aside>
-            </div>
-
-            <!-- VIEW: HARDWARE -->
-            <div id="hardware-view" class="view-panel">
-                <div
-                    style="max-width: 600px; margin: 4rem auto; background: var(--card-bg); padding: 2rem; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow);">
-                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-                        <i data-lucide="cpu" class="icon" style="color: var(--primary); width: 32px; height: 32px;"></i>
-                        <h2 style="margin: 0;">Configuração de Hardware</h2>
-                    </div>
-
-                    <div class="tool-group">
-                        <label>Controlador & Display</label>
-                        <div class="grid">
-                            <div class="input-field">
-                                <span>Controlador</span>
-                                <select id="hw-controller">
-                                    <option value="ST7789">ST7789 (IPS)</option>
-                                    <option value="ILI9341">ILI9341 (TFT)</option>
-                                    <option value="SSD1306">SSD1306 (OLED)</option>
-                                    <option value="GC9A01">GC9A01 (Circular)</option>
-                                </select>
-                            </div>
-                            <div class="input-field">
-                                <span>Resolução</span>
-                                <select id="hw-resolution">
-                                    <option value="240x240">240x240 px</option>
-                                    <option value="240x320">240x320 px</option>
-                                    <option value="128x64">128x64 px</option>
-                                    <option value="320x480">320x480 px</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tool-group">
-                        <label>Pinagem SPI (Interface)</label>
-                        <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
-                            <div class="input-field"><span>MOSI (SDA)</span><input type="number" id="pin-mosi"
-                                    value="23"></div>
-                            <div class="input-field"><span>SCK (SCL)</span><input type="number" id="pin-sck" value="18">
-                            </div>
-                            <div class="input-field"><span>MISO</span><input type="number" id="pin-miso" value="19">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tool-group">
-                        <label>Sinais de Controle</label>
-                        <div class="grid" style="grid-template-columns: repeat(2, 1fr);">
-                            <div class="input-field"><span>CS (Chip Select)</span><input type="number" id="pin-cs"
-                                    value="5"></div>
-                            <div class="input-field"><span>DC (Data/Cmd)</span><input type="number" id="pin-dc"
-                                    value="2"></div>
-                            <div class="input-field"><span>RST (Reset)</span><input type="number" id="pin-rst"
-                                    value="4"></div>
-                            <div class="input-field"><span>BL (Backlight)</span><input type="number" id="pin-bl"
-                                    value="15"></div>
-                        </div>
-                    </div>
-
-                    <div class="tool-group">
-                        <label>Velocidade SPI</label>
-                        <select id="hw-spi-speed">
-                            <option value="80000000">80.0 MHz (Ultra Fast)</option>
-                            <option value="40000000">40.0 MHz (Fast)</option>
-                            <option value="20000000">20.0 MHz (Standard)</option>
-                            <option value="10000000">10.0 MHz (Slow/Safe)</option>
-                        </select>
-                    </div>
-
-                    <button class="primary-btn" style="width:100%; margin-top:1rem; height: 50px; font-size: 1rem;"><i
-                            data-lucide="save"></i> Salvar Configuração de Hardware</button>
-                    <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 1rem; text-align: center;">Esses
-                        pinos serão incluídos automaticamente como definições no código exportado.</p>
-                </div>
-            </div>
         </main>
 
         <!-- STATUS BAR (Footer) -->
@@ -555,11 +283,10 @@ void setup() {
                 <span id="status-zoom">Zoom: 100%</span>
             </div>
             <div class="status-center">
-                <span id="status-project">PixelStream v5</span>
+                <span id="status-project">PixelDisplay240 v5</span>
             </div>
             <div class="status-right">
-                <span id="status-memory"><i data-lucide="cpu" style="width:12px;height:12px;"></i> RAM: --</span>
-                <span class="status-sep">|</span>
+
                 <span id="status-time"></span>
             </div>
         </footer>
@@ -588,7 +315,7 @@ void setup() {
 
     <div id="help-modal" class="modal" style="display:none;">
         <div class="modal-content">
-            <h2>Guia PixelStream</h2>
+            <h2>Guia PixelDisplay240</h2>
             <p>Atalhos: Ctrl+Z (Undo), Ctrl+Y (Redo), Alt (Picker).</p>
             <button id="btn-close-help" class="primary-btn">Fechar</button>
         </div>

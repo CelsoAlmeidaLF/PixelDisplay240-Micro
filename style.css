@@ -56,27 +56,7 @@
     max-height: 150px;
 }
 
-/* Resizable Code Editor */
-.code-editor-container {
-    position: relative;
-}
 
-.code-editor-container::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 10px;
-    height: 10px;
-    background: linear-gradient(135deg, transparent 50%, var(--primary) 50%);
-    border-radius: 0 0 4px 0;
-    pointer-events: none;
-    opacity: 0.5;
-}
-
-.code-editor-container.toggling {
-    transition: height 0.3s ease;
-}
 
 :root {
     --bg-dark: #0f172a;
@@ -146,38 +126,7 @@ header {
     letter-spacing: -0.025em;
 }
 
-.mode-nav {
-    display: flex;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 4px;
-    border-radius: 12px;
-    gap: 4px;
-}
 
-.nav-btn {
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    padding: 0.5rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-align: center;
-    line-height: 1;
-}
-
-.nav-btn.active {
-    background: linear-gradient(135deg, var(--primary), var(--accent));
-    color: white;
-    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
-    transform: scale(1.02);
-}
 
 .header-actions {
     display: flex;
@@ -214,20 +163,7 @@ header {
     background-color: #020617;
 }
 
-#prototype-view {
-    grid-template-columns: 200px 300px 1fr;
-    background: #020617;
-}
 
-#hardware-view {
-    padding: 2rem;
-    overflow-y: auto;
-}
-
-#code-view {
-    grid-template-columns: 200px 1fr 300px;
-    background: #020617;
-}
 
 .editor-area {
     flex: 1;
@@ -769,10 +705,7 @@ textarea {
         display: none;
     }
 
-    .nav-btn {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
-    }
+
 
     .header-actions .divider {
         display: none;
@@ -787,13 +720,7 @@ textarea {
         grid-template-columns: 220px 1fr 260px;
     }
 
-    #prototype-view {
-        grid-template-columns: 180px 280px 1fr;
-    }
 
-    #code-view {
-        grid-template-columns: 180px 1fr 260px;
-    }
 
     aside,
     section {
@@ -820,22 +747,7 @@ textarea {
         display: none;
     }
 
-    .mode-nav {
-        gap: 2px;
-        padding: 3px;
-    }
 
-    .nav-btn {
-        padding: 0.35rem 0.6rem;
-        font-size: 0.7rem;
-        gap: 4px;
-    }
-
-    .nav-btn i,
-    .nav-btn svg {
-        width: 14px;
-        height: 14px;
-    }
 
     .header-actions {
         gap: 0.3rem;
