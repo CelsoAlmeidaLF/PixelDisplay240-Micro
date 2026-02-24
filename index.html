@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelDisplay240 Studio - Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@400;700;800&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <i data-lucide="layout" style="color: var(--primary); width: 28px; height: 28px;"></i>
+                <h1>PixelDisplay240 <span style="color: var(--primary);">Designer</span></h1>
+            </div>
+
+            <div class="header-actions">
+                <button id="btn-undo" class="nav-btn" title="Desfazer (Ctrl+Z)"><i data-lucide="undo"></i></button>
+                <button id="btn-redo" class="nav-btn" title="Refazer (Ctrl+Y)"><i data-lucide="redo"></i></button>
+                <div class="divider"></div>
+                <button id="btn-save-project" class="secondary-btn small-btn"><i data-lucide="save"></i> Salvar
+                    Projeto</button>
+                <button id="btn-load-project" class="secondary-btn small-btn"><i data-lucide="folder-open"></i>
+                    Abrir</button>
+                <input type="file" id="project-input" style="display: none;" accept=".json">
+                <button id="btn-export" class="primary-btn small-btn"><i data-lucide="download"></i> Exportar</button>
+            </div>
+        </header>
+
+        <main id="main-views">
+            <div id="design-view" class="view-panel active">
+                <aside class="toolbar">
+                    <div class="tool-group">
+                        <label>Ferramentas</label>
+                        <div class="grid">
+                            <button id="tool-brush" class="tool-btn active" title="Pincel (B)"><i
+                                    data-lucide="paintbrush"></i></button>
+                            <button id="tool-eraser" class="tool-btn" title="Borracha (E)"><i
+                                    data-lucide="eraser"></i></button>
+                            <button id="tool-selection" class="tool-btn" title="Seleção (M)"><i
+                                    data-lucide="scissors"></i></button>
+                            <button id="tool-move" class="tool-btn" title="Mover (V)"><i
+                                    data-lucide="move"></i></button>
+                            <button id="tool-line" class="tool-btn" title="Linha (L)"><i
+                                    data-lucide="ruler"></i></button>
+                            <button id="tool-rect" class="tool-btn" title="Retângulo (R)"><i
+                                    data-lucide="square"></i></button>
+                            <button id="tool-circle" class="tool-btn" title="Círculo (C)"><i
+                                    data-lucide="circle"></i></button>
+                            <button id="tool-picker" class="tool-btn" title="Conta-gotas (Alt)"><i
+                                    data-lucide="pipette"></i></button>
+                            <button id="tool-text" class="tool-btn" title="Texto (T)"><i
+                                    data-lucide="type"></i></button>
+                            <button id="tool-fill" class="tool-btn" title="Balde de Tinta (F)"><i
+                                    data-lucide="paint-bucket"></i></button>
+                            <button id="tool-font-gen" class="tool-btn" title="Gerador de Fontes"><i
+                                    data-lucide="languages"></i></button>
+                            <button id="tool-clear" class="tool-btn" title="Limpar Tudo"><i
+                                    data-lucide="trash-2"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Simetria</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button id="btn-sym-x" class="secondary-btn small-btn" style="width: 100%;"><i
+                                    data-lucide="divide"></i> Simetria X</button>
+                            <button id="btn-sym-y" class="secondary-btn small-btn" style="width: 100%;"><i
+                                    data-lucide="divide" style="transform: rotate(90deg);"></i> Simetria Y</button>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Ajustes</label>
+                        <div class="input-field">
+                            <span>Pincel: <span id="brush-size-val">2</span>px</span>
+                            <input type="range" id="brush-size" min="1" max="50" value="2">
+                        </div>
+                        <div class="input-field">
+                            <span>Cor</span>
+                            <input type="color" id="color-picker" value="#38bdf8">
+                        </div>
+                        <div class="input-field">
+                            <span>Dithering</span>
+                            <select id="brush-pattern">
+                                <option value="solid">Sólido</option>
+                                <option value="checker">Xadrez</option>
+                                <option value="dots">Pontilhado</option>
+                                <option value="lines">Linhas</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Paleta</label>
+                        <div id="color-palette" class="palette-grid">
+                            <button id="btn-save-color" class="add-color-btn">+</button>
+                        </div>
+                        <select id="palette-presets" style="margin-top:8px;">
+                            <option value="custom">Personalizada</option>
+                            <option value="pico8">PICO-8</option>
+                            <option value="nes">NES</option>
+                            <option value="gameboy">GameBoy</option>
+                        </select>
+                    </div>
+                </aside>
+
+                <section class="editor-area">
+                    <div class="canvas-container">
+                        <div style="display: flex;">
+                            <div
+                                style="width: 25px; height: 25px; background: var(--card-bg); border: 1px solid var(--border); border-bottom: none; border-right: none;">
+                            </div>
+                            <div id="ruler-h" class="ruler ruler-h" style="flex: 1; border-bottom: none;"></div>
+                        </div>
+                        <div class="canvas-middle" style="display: flex;">
+                            <div id="ruler-v" class="ruler ruler-v"></div>
+                            <div id="canvas-wrapper" class="canvas-wrapper clipping">
+                                <div id="layers-container">
+                                    <canvas id="temp-canvas" width="240" height="240"></canvas>
+                                    <canvas id="grid-canvas" width="240" height="240"></canvas>
+                                    <div id="guides-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <aside class="sidebar">
+                    <div class="sidebar-tabs">
+                        <button class="tab-btn active" data-tab="layers"><i data-lucide="layers"></i></button>
+                        <button class="tab-btn" data-tab="collection"><i data-lucide="layout-grid"></i></button>
+                        <button class="tab-btn" data-tab="anim"><i data-lucide="play-circle"></i></button>
+                    </div>
+
+                    <!-- tab: layers -->
+                    <div id="tab-layers" class="tab-content active">
+                        <div class="tool-group">
+                            <label>Visualização</label>
+                            <div id="preview-wrapper" class="preview-box preview-dark">
+                                <canvas id="preview-canvas" width="240" height="240"
+                                    style="width:100%; height:auto;"></canvas>
+                                <div id="anim-overlay"
+                                    style="display:none; position:absolute; top:10px; right:10px; background:rgba(0,0,0,0.5); padding:4px; border-radius:4px; font-size:10px; color:white;">
+                                    PLAYING</div>
+                            </div>
+                            <div class="grid" style="margin-top:8px;">
+                                <label class="check-container">
+                                    <input type="checkbox" id="toggle-grid" checked>
+                                    <span class="checkmark"></span> Grid
+                                </label>
+                                <label class="check-container">
+                                    <input type="checkbox" id="toggle-ruler" checked>
+                                    <span class="checkmark"></span> Réguas
+                                </label>
+                                <label class="check-container">
+                                    <input type="checkbox" id="toggle-guides" checked>
+                                    <span class="checkmark"></span> Guias
+                                </label>
+                            </div>
+                            <div class="input-field compact" style="margin-top:8px;">
+                                <span>Zoom: <span id="work-zoom-val">100</span>%</span>
+                                <input type="range" id="work-zoom" min="50" max="800" value="100" step="10">
+                            </div>
+                        </div>
+
+                        <div class="tool-group">
+                            <label>Camadas</label>
+                            <div id="layers-list" class="layers-list" style="max-height: 200px; overflow-y: auto;">
+                            </div>
+                            <div style="display: flex; gap:5px; margin-top: 5px; flex-wrap: wrap;">
+                                <button id="btn-add-layer" class="secondary-btn small-btn"
+                                    style="flex:1; min-width: 80px;"><i data-lucide="plus"></i> Camada</button>
+                                <button id="btn-merge-layers" class="secondary-btn small-btn" title="Achatar"><i
+                                        data-lucide="layers"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- tab: collection -->
+                    <div id="tab-collection" class="tab-content">
+                        <div class="tool-group">
+                            <label>Coleção de Sprites</label>
+                            <div id="sprite-list" class="layers-list" style="max-height: 300px; overflow-y: auto;">
+                                <div class="hint">Adicione o canvas atual à coleção.</div>
+                            </div>
+                            <div style="display: flex; gap:5px; margin-top: 8px;">
+                                <button id="btn-add-collection" class="primary-btn small-btn" style="flex:1;"><i
+                                        data-lucide="plus-circle"></i> Capturar</button>
+                                <button id="btn-export-collection" class="secondary-btn small-btn"
+                                    title="Exportar Todos"><i data-lucide="download-cloud"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- tab: animation -->
+                    <div id="tab-anim" class="tab-content">
+                        <div class="tool-group">
+                            <label>Visualizador de Animação</label>
+                            <div class="input-field">
+                                <span>FPS: <span id="anim-fps-val">10</span></span>
+                                <input type="range" id="anim-fps" min="1" max="60" value="10">
+                            </div>
+                            <div style="display: flex; gap:5px;">
+                                <button id="btn-play-anim" class="secondary-btn small-btn" style="flex:1;"><i
+                                        data-lucide="play"></i> Reproduzir</button>
+                                <button id="btn-stop-anim" class="secondary-btn small-btn"><i data-lucide="square"></i>
+                                    Parar</button>
+                            </div>
+                            <div class="hint" style="margin-top:10px;">A animação usa todos os sprites da coleção em
+                                sequência.</div>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>Config Projeto</label>
+                        <div class="input-field"><span>Nome Sprite</span><input type="text" id="array-name"
+                                value="image_01"></div>
+                        <div class="grid" style="margin-top:8px;">
+                            <div class="input-field"><span>W</span><input type="number" id="canvas-width" value="240">
+                            </div>
+                            <div class="input-field"><span>H</span><input type="number" id="canvas-height" value="240">
+                            </div>
+                        </div>
+                        <div class="input-field"><span>Fundo</span><input type="color" id="bg-color-picker"
+                                value="#000000"></div>
+                        <div class="input-field">
+                            <span>Formato</span>
+                            <select id="export-format">
+                                <option value="jpeg">Imagem JPEG (.jpg)</option>
+                                <option value="rgb565">RGB565 (C Array)</option>
+                                <option value="rle565">RGB565 + RLE (C Array)</option>
+                                <option value="rgb888">RGB888 (C Array)</option>
+                            </select>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </main>
+    </div>
+
+    <!-- AI Generator Modal -->
+    <div id="ai-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content ai-creator">
+            <div class="modal-header">
+                <h3><i data-lucide="sparkles" style="color:var(--primary);"></i> AI Pixel Creator</h3>
+                <button id="ai-modal-close" class="nav-btn"><i data-lucide="x"></i></button>
+            </div>
+
+            <div class="input-field">
+                <label>O que você quer criar?</label>
+                <textarea id="ai-prompt" placeholder="Ex: Uma espada de fogo estilo 16-bit, fundo preto..."
+                    rows="3"></textarea>
+            </div>
+
+            <div class="grid" style="margin-bottom: 1rem;">
+                <div class="input-field">
+                    <span>Paleta</span>
+                    <select id="ai-palette">
+                        <option value="full">Cores Reais</option>
+                        <option value="16">16 Cores</option>
+                        <option value="8">8 Cores</option>
+                        <option value="4">4 Cores (Retro)</option>
+                    </select>
+                </div>
+                <div class="input-field">
+                    <span>Pixel Size</span>
+                    <select id="ai-pixel-size">
+                        <option value="1">1x1 (Original)</option>
+                        <option value="2">2x2 (Pixelado)</option>
+                        <option value="4">4x4 (Extremo)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="ai-preview" class="ai-preview-box" style="display: none;">
+                <canvas id="ai-preview-canvas" width="240" height="240"></canvas>
+            </div>
+
+            <div id="ai-loading" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p>Invocando redes neurais...</p>
+            </div>
+
+            <div class="modal-actions">
+                <button id="btn-ai-generate" class="primary-btn"><i data-lucide="zap"></i> Gerar Imagem</button>
+                <button id="btn-ai-apply" class="secondary-btn" style="display: none;"><i data-lucide="check"></i>
+                    Aplicar ao Canvas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI Overlay for Modals/Dialogs -->
+    <div id="ui-overlay" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3 id="modal-title">Título</h3>
+            <p id="modal-message">Mensagem aqui...</p>
+            <input type="text" id="modal-input" style="display: none; width: 100%; margin-top: 10px;"
+                class="input-field">
+            <div class="modal-actions">
+                <button id="modal-cancel" class="secondary-btn">Cancelar</button>
+                <button id="modal-ok" class="primary-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
